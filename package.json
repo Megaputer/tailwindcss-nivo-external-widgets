@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dist": "yarn && webpack --config ./webpack.config.js --progress",
-    "dist:watch": "yarn dist --watch"
+    "dist": "yarn && webpack --config ./webpack.config.js --progress --mode=production",
+    "dist:watch": "yarn dist --watch --mode=development"
   },
   "dependencies": {
     "react": "18.2.0",
