@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ApiRequestor, Table } from 'pa-typings';
+import './styles.css';
 
 interface Props {
   requestor: ApiRequestor;
@@ -30,5 +31,10 @@ export const MyComponent: React.FC<Props> = ({ requestor }) => {
 
   }, [requestor]);
 
-  return <div>Data: {rowColumn} column(s), {rowCount} row(s)</div>;
+  return (
+    <div className='main'>
+      <div className='column'>Data: {rowColumn} column(s)</div>
+      <div className='row'>Data: {rowCount} row(s)</div>
+    </div>
+  );
 }

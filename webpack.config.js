@@ -38,6 +38,10 @@ module.exports = function (_, argv) {
                   }
               }
           ]
+        },
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader']
         }
       ]
     },
