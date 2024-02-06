@@ -1,12 +1,14 @@
-import * as React from 'react';
-import { ApiRequestor, Table } from 'pa-typings';
+module.exports = function (options) {
+  return (
+`import * as React from 'react';
+import type { ApiRequestor, Table } from 'pa-typings';
 import './styles.css';
 
 interface Props {
   requestor: ApiRequestor;
 }
 
-export const MyComponent: React.FC<Props> = ({ requestor }) => {
+export const ${options.name}: React.FC<Props> = ({ requestor }) => {
   const wrapperGuid = React.useRef<{ wrapperGuid: string }>({ wrapperGuid: '' });
   const [rowCount, setRowCount] = React.useState(0);
   const [rowColumn, setColumnCount] = React.useState(0);
@@ -37,4 +39,6 @@ export const MyComponent: React.FC<Props> = ({ requestor }) => {
       <div className='row'>Data: {rowCount} row(s)</div>
     </div>
   );
+}
+`);
 }

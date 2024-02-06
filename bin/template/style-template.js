@@ -1,3 +1,6 @@
+module.exports = function() {
+return (
+`
 .main {
   display: flex;
   flex-direction: column;
@@ -11,5 +14,7 @@
 }
 
 .column {
-  color: red;;
+  color: red;
 }
+`)
+};
