@@ -29,7 +29,7 @@ There are two ways to install yarn on your local machine:
 
 ## Developing
 
- To create a widget run the `yarn create` command and specify a widget name.
+ To create a widget run the `yarn create:widget` command and specify a widget name.
  For example, you can write `Example` and the `example` directory will be created in the `src` folder. The folder will contain the following files: `model.tsx`, `view.tsx`, `info.json`, `styles.css`.
 Structure of the directory `example`:
 ```
