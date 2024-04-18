@@ -9,7 +9,7 @@ module.exports = function (_, argv = {}) {
 
   const { mode = 'production', outputPath = path.resolve(__dirname, 'build') } = argv;
   const isProduction = mode === 'production';
-  const { entry, patterns } = getConfig(outputPath, Boolean(argv.outputPath));
+  const { entry, patterns } = getConfig(outputPath);
 
   const config = {
     entry,
