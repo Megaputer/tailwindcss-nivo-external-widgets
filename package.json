@@ -23,7 +23,7 @@
     "css-loader": "7.1.2",
     "external-widget-cli": "megaputer/external-widget-cli",
     "fork-ts-checker-webpack-plugin": "9.0.2",
-    "pa-typings": "megaputer/pa-typings",
+    "pa-typings": "megaputer/pa-typings#main",
     "style-loader": "4.0.0",
     "terser-webpack-plugin": "5.3.10",
     "ts-loader": "9.5.1",
