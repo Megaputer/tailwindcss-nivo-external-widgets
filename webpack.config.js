@@ -5,7 +5,7 @@ module.exports = function (_, argv = {}) {
   const CopyPlugin = require('copy-webpack-plugin');
   const TerserPlugin = require('terser-webpack-plugin');
 
-  const { getWebpackEntriesPatterns } = require('external-widget-cli');;
+  const { getWebpackEntriesPatterns } = require('external-widget-cli');
 
   const { mode = 'production', outputPath = path.resolve(__dirname, 'build') } = argv;
   const isProduction = mode === 'production';
