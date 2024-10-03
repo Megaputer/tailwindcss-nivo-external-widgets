@@ -18,7 +18,7 @@ The project consist of:
 Install a required version of Node.js from the link above.
 
 There are two ways to install yarn on your local machine:
-- using the `coprepack enable` command;
+- using the `corepack enable` command;
 - using the `npm install yarn global` command.
 
 ## Installation
