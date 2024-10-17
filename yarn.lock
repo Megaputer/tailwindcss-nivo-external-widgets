@@ -2493,7 +2493,7 @@ __metadata:
 
 external-widget-cli@megaputer/external-widget-cli:
   version: 1.2.2
-  resolution: "external-widget-cli@https://github.com/megaputer/external-widget-cli.git#commit=b8f21d47b63256d3ab224d705a0472135a7de34e"
+  resolution: "external-widget-cli@https://github.com/megaputer/external-widget-cli.git#commit=25e95dd3c5e8793a1dcb6a5ea44f5a30e8d116f4"
   dependencies:
     inquirer: "npm:8.0.0"
     jszip: "npm:3.10.1"
@@ -2502,7 +2502,7 @@ external-widget-cli@megaputer/external-widget-cli:
     yargs: "npm:17.7.2"
   bin:
     external-widget: ./bin/index.js
-  checksum: 10c0/40146c1c915e642a9266c1f5188920a7585cb38cd98c74e99f111aa8b2038fea1ab5a1804b43427b9ae5da1396a62877fa1fd778775d5ed6363602115e10ed4f
+  checksum: 10c0/23b405658575658d65f2f05b2913902122fff71907e4ebbac07bb97d5e16eadc85b59b0ab575ba66426831a134ef708a2d3ff8dd9043332fd526a54765fdda90
   languageName: node
   linkType: hard
 

@@ -12,6 +12,7 @@
     "typescript",
     "typescriptreact"
   ],
+  "files.eol": "\r\n",
   "files.encoding": "utf8",
   "files.exclude": {
     "**/node_modules": true,
