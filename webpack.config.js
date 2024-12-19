@@ -4,6 +4,7 @@ module.exports = function (_, argv = {}) {
   const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
   const CopyPlugin = require('copy-webpack-plugin');
   const TerserPlugin = require('terser-webpack-plugin');
+  // const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
   const { getWebpackEntriesPatterns } = require('external-widget-cli');
 
@@ -21,7 +22,8 @@ module.exports = function (_, argv = {}) {
         type: 'self',
       },
       libraryTarget: 'window',
-      clean: isProduction
+      clean: isProduction,
+      chunkFormat: false
     },
     optimization: {
       minimize: isProduction,
@@ -54,13 +56,72 @@ module.exports = function (_, argv = {}) {
           ]
         },
         {
+          test: /\.lazy.css$/,
+          use: [
+            {
+              loader: 'style-loader',
+              options: {
+                attributes: { name: 'tailwindcss' },
+                injectType: 'lazyAutoStyleTag',
+        				insert: require.resolve('./insert-function.js'),
+              }
+            },
+            {
+              loader: 'css-loader',
+              options: {
+                modules: false
+              }
+            },
+            'postcss-loader'
+          ],
+        },
+        {
           test: /\.css$/,
-          use: ['style-loader', 'css-loader']
+          use: [
+            {
+              loader: 'style-loader',
+            },
+            {
+            loader: 'css-loader',
+              options: {
+                modules: false
+              }
+            },
+            'postcss-loader'
+          ],
+          exclude: /(\.lazy|module)\.css$/,
+        },
+        {
+          test: /\.module.css$/,
+          use: [
+            'style-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                modules: {
+                  mode: 'local',
+                  localIdentName: '[local]--[hash:base64:5]',
+                  exportLocalsConvention: 'camelCaseOnly',
+                  namedExport: true
+                },
+                import: false,
+                url: false
+              }
+            },
+            'postcss-loader'
+          ],
         }
       ]
     },
     plugins: [
       new ForkTsCheckerWebpackPlugin(),
+      // isProduction && new MiniCssExtractPlugin({
+      //   filename: "[name]/main.css",
+      //   chunkFilename: "[name]/[id].css",
+      // }),
+      // new webpack.optimize.LimitChunkCountPlugin({
+      //   maxChunks: 1,
+      // }),
       new CircularDependencyPlugin({
         exclude: /node_modules/,
         failOnError: true

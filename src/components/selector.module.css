@@ -1,0 +1,9 @@
+/* For Firefox Browser */
+.scrollbar {
+  scrollbar-width: thin;
+}
+
+/* For Chrome, EDGE, Opera, Others */
+.scrollbar::-webkit-scrollbar {
+  width: 20px;
+}

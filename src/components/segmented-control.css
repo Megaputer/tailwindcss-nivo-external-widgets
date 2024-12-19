@@ -1,0 +1,58 @@
+.selected-item {
+  text-align: center;
+}
+
+.controls-container {
+  --highlight-width: auto;
+  --highlight-height: auto;
+  --highlight-x-pos: 0;
+
+  display: flex;
+  border: white solid 1px;
+  width: max-content;
+}
+
+.controls {
+  display: inline-flex;
+  justify-content: space-between;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.controls::before {
+  content: "";
+  background: rgb(71 196 251);
+  border-radius: 99999px;
+  width: var(--highlight-width);
+  height: var(--highlight-height);
+  transform: translateX(var(--highlight-x-pos));
+  position: absolute;
+  margin: auto 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.controls.ready::before {
+  transition: transform 0.3s ease, width 0.3s ease;
+}
+
+.segment {
+  /* width: 100%; uncomment for each segment to have matching width */
+  position: relative;
+  text-align: center;
+}
+
+.segment label {
+  cursor: pointer;
+  display: block;
+  font-weight: 700;
+  padding: 10px;
+  transition: color 0.5s ease;
+}
+
+.segment.active {
+  color: #fff;
+}

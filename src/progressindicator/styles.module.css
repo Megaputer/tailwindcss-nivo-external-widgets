@@ -1,0 +1,23 @@
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 700;
+}
+
+.row {
+  color: blue;
+}
+
+.track-1 {
+  background-color: #6b6ef8;
+}
+
+.track-2 {
+  background-color: #c654f3;
+}
+
+.track-3 {
+  background-color: #3b94fd;
+}

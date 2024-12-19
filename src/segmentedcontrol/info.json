@@ -1,0 +1,12 @@
+{
+  "guid": "dfc3b4f2-bebe-43e6-856b-35c2705a2f8e",
+  "name": "SegmentedControl",
+  "icon": "",
+  "description": "",
+  "apprSchema": [],
+  "dependencies": [],
+  "sizes": {
+    "width": 335,
+    "height": 45
+  }
+}
