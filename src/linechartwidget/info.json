@@ -3,6 +3,31 @@
   "name": "LineChartWidget",
   "icon": "",
   "description": "",
-  "apprSchema": [],
+  "apprSchema": [
+    {
+      "label": "General",
+      "icon": "",
+      "items": [
+        {
+          "label": "Column x axis",
+          "type": "select",
+          "apprKey": "xAxis",
+          "defaultValue": "",
+          "props": {
+            "options": []
+          }
+        },
+        {
+          "label": "Columns y axis",
+          "type": "multiselect",
+          "apprKey": "yAxis",
+          "defaultValue": [],
+          "props": {
+            "options": []
+          }
+        }
+      ]
+    }
+  ],
   "dependencies": []
 }

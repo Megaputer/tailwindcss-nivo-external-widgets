@@ -3,7 +3,8 @@ import type { TConditionNode, ApiRequestor, IWidget, WidgetArgs, ApprTab } from 
 
 import { SegmentedControl } from './view';
 
-import '../main.css';
+import '../tailwind.css';
+import * as css from './styles.module.css';
 
 class SegmentedControlWidget implements IWidget {
   private requestor: ApiRequestor | null = null;
@@ -22,9 +23,18 @@ class SegmentedControlWidget implements IWidget {
   }
 
   render(parent: HTMLElement) {
-    // styles.default.use();
-    this.root = createRoot(parent);
-    this.updateContainer();
+    parent.classList.add(css.container);
+
+    const shadowRoot = parent.attachShadow({ mode: 'open' });
+    const link = document.createElement('link');
+    link.setAttribute('rel', 'stylesheet');
+    link.setAttribute('href', this.args.getUrlStatics('main.css'));
+    shadowRoot.appendChild(link);
+
+    link.onload = () => {
+      this.root = createRoot(shadowRoot);
+      this.updateContainer();
+    };
   }
 
   private updateContainer() {

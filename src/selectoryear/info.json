@@ -1,8 +1,46 @@
 {
   "guid": "a64b6543-6c5e-4a91-be62-3f7ae8af5877",
-  "name": "SelectorYear",
+  "name": "Selector date period",
   "icon": "",
   "description": "",
-  "apprSchema": [],
+  "apprSchema": [
+    {
+      "label": "General",
+      "icon": "",
+      "items": [
+        {
+          "label": "Column",
+          "type": "select",
+          "apprKey": "column",
+          "defaultValue": "",
+          "props": {
+            "options": [
+              { "value": "", "label": "None" }
+            ]
+          }
+        },
+        {
+          "label": "Date period",
+          "type": "select",
+          "apprKey": "period",
+          "defaultValue": "year",
+          "props": {
+            "options": [
+              { "value": "year", "label": "Year" },
+              { "value": "month", "label": "Month" },
+              { "value": "weekday", "label": "Week day" }
+            ]
+          }
+        },
+        {
+          "label": "Placeholder",
+          "type": "text",
+          "apprKey": "placeholder",
+          "description": "",
+          "defaultValue": ""
+        }
+      ]
+    }
+  ],
   "dependencies": []
 }

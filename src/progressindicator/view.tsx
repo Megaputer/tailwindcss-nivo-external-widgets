@@ -1,8 +1,10 @@
 import * as React from 'react';
-import type { ApiRequestor, Table } from 'pa-typings';
-import { Progress } from '@nextui-org/progress';
+import type { ApiRequestor, ApprValue, DatasetInfo } from 'pa-typings';
 
-import * as css from './styles.module.css';
+import { Progress } from '@nextui-org/progress';
+import { NextUIProvider } from '@nextui-org/system';
+
+import * as css from './progress.css';
 
 const colors = ['#6b6ef8', '#c654f3', '#3b94fd'];
 
@@ -14,45 +16,55 @@ type Data = {
 
 interface Props {
   requestor: ApiRequestor;
+  getApprValue: (key: string) => ApprValue | undefined;
 }
 
-export const ProgressIndicator: React.FC<Props> = ({ requestor }) => {
+export const ProgressIndicator: React.FC<Props> = ({ requestor, getApprValue }) => {
   const wrapperGuid = React.useRef<{ wrapperGuid: string }>({ wrapperGuid: '' });
 
+  const [dsInfo, setDsInfo] = React.useState<DatasetInfo>();
   const [data, setData] = React.useState<Data[]>([]);
+  const colIds = getApprValue('columns') as unknown as number[];
 
   React.useEffect(() => {
     const fetchData = async () => {
       const guid = wrapperGuid.current = await requestor.wrapperGuid();
       const dsInfo = await requestor.info(guid);
-
-      const values = await requestor.values({
-        offset: 0,
-        rowCount: dsInfo.rowCount,
-        wrapperGuid: guid.wrapperGuid
-      });
-
-      const newData: any[] = [];
-      let id = 0;
-      for (const col of dsInfo.columns) {
-        if (col.type === 'Numeric') {
-          for (const vals of values.table?.slice(0, 1) || []) {
-            newData.push({
-              title: col.title,
-              value: Number(vals[col.id]),
-              color: colors[id]
-            });
-          }
-          id += 1;
-        }
-      }
-      setData(newData);
+      setDsInfo(dsInfo);
     };
     fetchData();
   }, [requestor]);
 
+  React.useEffect(() => {
+    const getValues = async () => {
+      if (dsInfo == undefined)
+        return;
+
+      const { table = [] } = await requestor.values({
+        offset: 0,
+        rowCount: dsInfo.rowCount,
+        columnIndexes: colIds,
+        wrapperGuid: wrapperGuid.current.wrapperGuid
+      });
+
+      const newData: any[] = [];
+      let id = 0;
+      for (const colId of colIds) {
+        const title = dsInfo.columns[colId].title || 'Unknown column';
+        newData.push({
+          title,
+          value: table[0][id],
+          color: colors[id] || 'white'
+        });
+        id += 1;
+      }
+      setData(newData);
+    };
+    getValues();
+  }, [dsInfo, colIds.length]);
+
   return (
-    <div className={css.main}>
+    <div>
       {data.map(({ title, value, color }) => (
         <ProgressBlock
           key={value}
@@ -65,34 +77,39 @@ export const ProgressIndicator: React.FC<Props> = ({ requestor }) => {
 };
 
 const ProgressBlock: React.FC<Data> = ({ title, value, color }) => {
+  const style = { '--custom-bg': color } as React.CSSProperties;
   return (
-    <div className='flex flex-col gap-3 w-full max-w-md text-white'>
-      <div className='grid grid-cols-7 gaps-4'>
-        <div className='col-span-3'>{title}</div>
-        <div className='col-span-2'>
-          <div className='flex flex-row justify-between items-center px-2.5'>
-            <TriangleIcon dir={'down'} />
-            <span>{`${value.toFixed(2)} ppt`}</span>
+    <NextUIProvider className='dark'>
+      <div className='flex flex-col gap-1 w-full max-w-md text-white pb-[15px]'>
+        <div className='grid grid-cols-7 gaps-4'>
+          <div className='col-span-3'>{title}</div>
+          <div className='col-span-2'>
+            <div className='flex flex-row justify-between items-center px-2.5'>
+              <TriangleIcon dir={'down'} />
+              <span>{`${value.toFixed(2)} ppt`}</span>
+            </div>
+          </div>
+          <div
+            className='col-span-1'
+            style={{
+              display: 'flex',
+              justifyContent: 'end'
+            }}
+          >
+            {value.toFixed(2) + '%'}
           </div>
         </div>
-        <div
-          className='col-span-1'
-          style={{
-            display: 'flex',
-            justifyContent: 'end'
+        <Progress
+          aria-label='Progress'
+          value={value}
+          color={undefined}
+          style={style}
+          classNames={{
+            indicator: css.bgCustom, // 'bg-[--hover-color]',
           }}
-        >
-          {value.toFixed(2) + '%'}
-        </div>
+        />
       </div>
-      <Progress
-        aria-label='Progress'
-        value={value}
-        classNames={{
-          indicator: `bg-[${color}]`,
-        }}
-      />
-    </div>
+    </NextUIProvider>
   );
 };
 

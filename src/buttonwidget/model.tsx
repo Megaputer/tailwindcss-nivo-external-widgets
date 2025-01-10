@@ -1,15 +1,14 @@
 import { createRoot, Root } from 'react-dom/client';
 import type { TConditionNode, ApiRequestor, IWidget, WidgetArgs, ApprTab } from 'pa-typings';
 
-import { SelectorMonth } from './view';
+import { ButtonWidget } from './view';
 
 import '../tailwind.css';
 import * as css from './styles.module.css';
 
-class SelectorMonthWidget implements IWidget {
+class ButtonWidgetWidget implements IWidget {
   private requestor: ApiRequestor | null = null;
   private root: Root | null = null;
-  private shadowRoot: ShadowRoot | null = null;
   private condition: TConditionNode | undefined = undefined;
 
   constructor(private args: WidgetArgs) {}
@@ -26,24 +25,23 @@ class SelectorMonthWidget implements IWidget {
   render(parent: HTMLElement) {
     parent.classList.add(css.container);
 
-    this.shadowRoot = parent.attachShadow({ mode: 'open' });
+    const shadowRoot = parent.attachShadow({ mode: 'open' });
     const link = document.createElement('link');
     link.setAttribute('rel', 'stylesheet');
     link.setAttribute('href', this.args.getUrlStatics('main.css'));
-    this.shadowRoot?.appendChild(link);
+    shadowRoot.appendChild(link);
 
     link.onload = () => {
-      this.root = createRoot(this.shadowRoot!);
+      this.root = createRoot(shadowRoot);
       this.updateContainer();
     };
   }
 
   private updateContainer() {
     if (this.root && this.requestor)
-      this.root.render(<SelectorMonth
+      this.root.render(<ButtonWidget
         requestor={this.requestor}
-        args={this.args}
-        shadowRoot={this.shadowRoot!}
+        getApprValue={this.args.getApprValue}
       />);
   }
 
@@ -54,4 +52,4 @@ class SelectorMonthWidget implements IWidget {
   dispose(): void { }
 }
 
-export const create = (args: WidgetArgs) => new SelectorMonthWidget(args);
+export const create = (args: WidgetArgs) => new ButtonWidgetWidget(args);

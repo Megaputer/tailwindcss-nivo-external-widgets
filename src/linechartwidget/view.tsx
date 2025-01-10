@@ -1,10 +1,11 @@
 import * as React from 'react';
-import type { ApiRequestor, Table } from 'pa-typings';
+
+import type { ApiRequestor, ApprValue, DatasetInfo, Table } from 'pa-typings';
+import { variantToDate } from 'helper';
 
 import { ResponsiveLine } from '@nivo/line';
 
 import * as css from './styles.module.css';
-import { variantToDate } from 'helper';
 
 const colorByGroupId = {
   'col_0': '#6b6ef8',
@@ -185,42 +186,55 @@ type Data = {
 
 interface Props {
   requestor: ApiRequestor;
+  getApprValue: (key: string) => ApprValue | undefined;
 }
 
-export const LineChartWidget: React.FC<Props> = ({ requestor }) => {
+export const LineChartWidget: React.FC<Props> = ({ requestor, getApprValue }) => {
   const wrapperGuid = React.useRef<{ wrapperGuid: string }>({ wrapperGuid: '' });
+  const [dsInfo, setDsInfo] = React.useState<DatasetInfo>();
   const [data, setData] = React.useState<Data[]>([]);
+
+  const xAxis = getApprValue('xAxis') as number;
+  const yAxis = getApprValue('yAxis') as unknown as number[];
 
   React.useEffect(() => {
     const fetchData = async () => {
       const guid = wrapperGuid.current = await requestor.wrapperGuid();
       const dsInfo = await requestor.info(guid);
+      setDsInfo(dsInfo);
+    };
+    fetchData();
+  }, [requestor]);
+
+  React.useEffect(() => {
+    const getValues = async () => {
+      if (dsInfo == undefined)
+        return;
 
       const values = await requestor.values({
         offset: 0,
+        columnIndexes: [xAxis, ...yAxis],
         rowCount: dsInfo.rowCount,
-        wrapperGuid: guid.wrapperGuid
+        wrapperGuid: wrapperGuid.current.wrapperGuid
       });
 
       const newData: Data[] = [];
       let id = 0;
-      for (const col of dsInfo.columns) {
-        if (col.type === 'Numeric') {
-          const data = [];
-          for (const vals of values.table?.slice(0, 20) || []) {
-            data.push({
-              x: +vals[1],
-              y: Number(vals[col.id])
-            });
-          }
-          newData.push({ id: 'col_' + id, color: 'hsl(179, 70%, 50%)', data });
-          id += 1;
+      for (let i = 1; i <= yAxis.length; i++) {
+        const data = [];
+        for (const vals of values.table?.slice(0, 20) || []) {
+          data.push({
+            x: +vals[0],
+            y: Number(vals[i])
+          });
         }
+        newData.push({ id: 'col_' + id, color: 'hsl(179, 70%, 50%)', data });
+        id += 1;
       }
       setData(newData);
     };
-    fetchData();
-  }, [requestor]);
+    getValues();
+  }, [dsInfo, xAxis, yAxis.length]);
 
   return (
     <div className={css.main}>
@@ -268,7 +282,8 @@ export const LineChartWidget: React.FC<Props> = ({ requestor }) => {
           truncateTickAt: 0,
 
           format: (val) => {
-            const str = new Intl.DateTimeFormat('en-US', { month: '2-digit', year: '2-digit' }).format(val);
+            const date = variantToDate(val);
+            const str = new Intl.DateTimeFormat('en-US', { month: '2-digit', year: '2-digit' }).format(date);
             return str;
           }
         }}

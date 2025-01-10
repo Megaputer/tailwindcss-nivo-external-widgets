@@ -1,20 +1,34 @@
 import * as React from 'react';
 
-import { NextUIProvider, Select, SelectItem } from '@nextui-org/react';
+import { NextUIProvider } from '@nextui-org/system';
+import { Select, SelectItem } from '@nextui-org/select';
+import type { Selection } from '@react-types/shared';
 
-import './selector.css';
-
-import * as css from './selector.module.css';
+import * as css from './selector.css';
 
 interface Props {
   placeholder?: string;
   values: { key: number; label: string }[];
-  onDrillDown?: (val: number) => void;
+  onDrillDown?: (val?: number) => void;
   shadowRoot?: ShadowRoot;
 }
 
-export const Selector: React.FC<Props> = ({ placeholder, values, onDrillDown, shadowRoot }) => {
+export const Selector: React.FC<Props> = ({ placeholder, values, shadowRoot, onDrillDown }) => {
+  const [keys, setKeys] = React.useState<Selection>();
   const ref = React.useRef(null);
+
+  const rendererClear = () => {
+    return (
+      <div
+        onClick={() => {
+          setKeys(new Set());
+          onDrillDown?.();
+        }}
+      >
+        <CloseIcon width={16} height={16} color='#fff' />
+      </div>
+    );
+  };
 
   const classes = `bg-transparent data-[hover]:bg-transparent
     data-[selectable=true]:focus:bg-sky-500/50 text-white data-[selectable=true]:focus:text-white`;
@@ -22,12 +36,13 @@ export const Selector: React.FC<Props> = ({ placeholder, values, onDrillDown, sh
   return (
     <NextUIProvider>
       <Select
-        aria-label='Выборать опцию'
         disableAnimation={true}
         placeholder={placeholder}
+        selectedKeys={keys}
         onChange={({ target }) => {
           onDrillDown?.(+target.value);
         }}
+        onSelectionChange={setKeys}
         className='bg-transparent border-solid border-1 border-white rounded-full text-white font-bold'
         classNames={{
           trigger: 'bg-transparent data-[hover]:bg-transparent text-white',
@@ -50,6 +65,7 @@ export const Selector: React.FC<Props> = ({ placeholder, values, onDrillDown, sh
           hideScrollBar: false,
           className: `w-full dark ${css.scrollbar}`,
         }}
+        endContent={rendererClear()}
       >
         {values.map((v) => (
           <SelectItem
@@ -66,5 +82,25 @@ export const Selector: React.FC<Props> = ({ placeholder, values, onDrillDown, sh
       </Select>
       <div ref={ref} style={{ position: 'fixed', zIndex: 1 }} />
     </NextUIProvider>
+  );
+};
+
+interface CloseIconProps {
+  width: number;
+  height: number;
+  color: string;
+}
+
+const CloseIcon = ({ width, height, color }: CloseIconProps) => {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width={width}
+      height={height}
+      viewBox='0 0 32 32'
+    >
+      {/* eslint-disable-next-line @stylistic/max-len */}
+      <path fill={color} d='M 7.21875 5.78125 L 5.78125 7.21875 L 14.5625 16 L 5.78125 24.78125 L 7.21875 26.21875 L 16 17.4375 L 24.78125 26.21875 L 26.21875 24.78125 L 17.4375 16 L 26.21875 7.21875 L 24.78125 5.78125 L 16 14.5625 Z'></path>
+    </svg>
   );
 };

@@ -1,8 +1,8 @@
 import { useRef, useState, useEffect } from 'react';
 
-import { Button } from '@nextui-org/react';
+import { Button } from '@nextui-org/button';
 
-import './segmented-control.css';
+import * as css from './segmented-control.css';
 
 type SegmentItem = {
   label: string;
@@ -46,12 +46,12 @@ export const SegmentedControlBase: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className='controls-container bg-sky-950 rounded-full' ref={controlRef}>
-      <div className={`controls ${componentReady.current ? 'ready' : 'idle'}`}>
+    <div className={`${css.controlsContainer} bg-sky-950 rounded-full`} ref={controlRef}>
+      <div className={`${css.controls} ${componentReady.current ? css.ready : css.idle}`}>
         {segments.map((item, i) => (
           <div
             key={item.value}
-            className={`segment ${i === activeIndex ? 'active' : 'inactive'}`}
+            className={`${css.segment} ${i === activeIndex ? css.active : css.inactive}`}
             ref={item.ref}
           >
             <Button
@@ -59,7 +59,7 @@ export const SegmentedControlBase: React.FC<Props> = (props) => {
               name={name}
               className='bg-transparent border-transparent text-white font-bold'
               radius='full'
-              onClick={() => onChange(item.value, i)}
+              onPress={() => onChange(item.value, i)}
             >
               {item.label}
             </Button>

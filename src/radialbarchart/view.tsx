@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { ApiRequestor, Table } from 'pa-typings';
+import type { ApiRequestor, ApprValue, DatasetInfo } from 'pa-typings';
 import { RadialBarCustomLayerProps, ResponsiveRadialBar } from '@nivo/radial-bar';
 import { BoxLegendSvg } from '@nivo/legends';
 
@@ -49,42 +49,49 @@ type Data = {
 
 interface Props {
   requestor: ApiRequestor;
+  getApprValue: (key: string) => ApprValue | undefined;
 }
 
-export const RadialBarChart: React.FC<Props> = ({ requestor }) => {
+export const RadialBarChart: React.FC<Props> = ({ requestor, getApprValue }) => {
   const wrapperGuid = React.useRef<{ wrapperGuid: string }>({ wrapperGuid: '' });
+  const [dsInfo, setDsInfo] = React.useState<DatasetInfo>();
   const [data, setData] = React.useState<Data[]>([]);
+
+  const colIds = getApprValue('columns') as unknown as number[];
 
   React.useEffect(() => {
     const fetchData = async () => {
       const guid = wrapperGuid.current = await requestor.wrapperGuid();
       const dsInfo = await requestor.info(guid);
+      setDsInfo(dsInfo);
+    };
+    fetchData();
+  }, [requestor]);
 
-      const values = await requestor.values({
+  React.useEffect(() => {
+    const getValues = async () => {
+      if (dsInfo == undefined)
+        return;
+
+      const { table = [] } = await requestor.values({
         offset: 0,
-        rowCount: dsInfo.rowCount,
-        wrapperGuid: guid.wrapperGuid
+        rowCount: 1,
+        columnIndexes: colIds,
+        wrapperGuid: wrapperGuid.current.wrapperGuid
       });
 
       const newData: Data[] = [];
       let id = 0;
-      for (const col of dsInfo.columns) {
-        if (col.type === 'Numeric') {
-          const data = [];
-          for (const vals of values.table?.slice(0, 1) || []) {
-            data.push({
-              x: col.title,
-              y: Number(vals[col.id])
-            });
-          }
-          newData.push({ id: 'col_' + id, data });
-          id += 1;
-        }
+      for (const colId of colIds) {
+        const title = dsInfo.columns[colId].title || 'Unknown column';
+        const data = [{ x: title, y: Number(table[0][id]) }];
+        newData.push({ id: 'col_' + id, data });
+        id += 1;
       }
       setData(newData);
     };
-    fetchData();
-  }, [requestor]);
+    getValues();
+  }, [dsInfo, colIds.length]);
 
   const CustomLayer = ({ center }: RadialBarCustomLayerProps) => {
     const lines = 'Выполнение плана'.toUpperCase().split(' ');
@@ -110,7 +117,7 @@ export const RadialBarChart: React.FC<Props> = ({ requestor }) => {
   };
 
   const CustomLegendLayer = ({ center }: RadialBarCustomLayerProps) => {
-    const legendData = data.map(({ id, data }) => ({ id, label: `${data[0].y.toFixed(2)} %` }));
+    const legendData = data.map(({ id, data }) => ({ id, label: `${data[0]?.y.toFixed(2)} %` }));
 
     return (
       <BoxLegendSvg
@@ -149,7 +156,7 @@ export const RadialBarChart: React.FC<Props> = ({ requestor }) => {
       <ResponsiveRadialBar
         data={data}
         theme={demoTheme}
-        colors={d => colorByGroupId[d.groupId as keyof typeof colorByGroupId]}
+        colors={d => colorByGroupId[d.groupId as keyof typeof colorByGroupId] || '#fff'}
         valueFormat=' >-.2f'
         padding={0.6}
         cornerRadius={20}

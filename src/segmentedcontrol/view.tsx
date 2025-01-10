@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef, type FC } from 'react';
 
-import { NextUIProvider } from '@nextui-org/react';
+import { NextUIProvider } from '@nextui-org/system';
 
-import { SegmentedControlBase } from '../components/segemented-control-base';
+import { SegmentedControlBase } from 'components/segemented-control-base';
 
 import type { ApiRequestor, Table } from 'pa-typings';
-import './styles.css';
 
 interface Props {
   requestor: ApiRequestor;
@@ -38,7 +37,7 @@ export const SegmentedControl: FC<Props> = ({ requestor }) => {
   }, [requestor]);
 
   return (
-    <NextUIProvider>
+    <NextUIProvider className='dark'>
       <SegmentedControlBase
         name='group'
         callback={(v: string) => setSelectedValue(v)}

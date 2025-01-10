@@ -1,0 +1,21 @@
+{
+  "guid": "9c2d671a-3c88-41a3-b9f2-47d678912a59",
+  "name": "ButtonWidget",
+  "icon": "",
+  "description": "",
+  "apprSchema": [
+    {
+      "label": "General",
+      "icon": "",
+      "items": [
+        {
+          "label": "Icon",
+          "type": "image",
+          "apprKey": "icon",
+          "description": "",
+          "defaultValue": ""
+        }
+      ]
+    }
+  ]
+}

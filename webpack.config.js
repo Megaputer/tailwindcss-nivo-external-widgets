@@ -4,7 +4,7 @@ module.exports = function (_, argv = {}) {
   const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
   const CopyPlugin = require('copy-webpack-plugin');
   const TerserPlugin = require('terser-webpack-plugin');
-  // const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+  const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
   const { getWebpackEntriesPatterns } = require('external-widget-cli');
 
@@ -76,20 +76,39 @@ module.exports = function (_, argv = {}) {
           ],
         },
         {
+          test: /tailwind.css$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader
+            },
+            {
+              loader: 'css-loader',
+            },
+            'postcss-loader'
+          ],
+        },
+        {
           test: /\.css$/,
           use: [
             {
-              loader: 'style-loader',
+              loader: MiniCssExtractPlugin.loader
             },
             {
-            loader: 'css-loader',
+              loader: 'css-loader',
               options: {
-                modules: false
+                modules: {
+                  mode: 'local',
+                  localIdentName: '[local]--[hash:base64:5]',
+                  exportLocalsConvention: 'camelCaseOnly',
+                  namedExport: true,
+                },
+                import: true,
+                url: false
               }
             },
             'postcss-loader'
           ],
-          exclude: /(\.lazy|module)\.css$/,
+          exclude: /(\.lazy|module|tailwind)\.css$/,
         },
         {
           test: /\.module.css$/,
@@ -115,13 +134,10 @@ module.exports = function (_, argv = {}) {
     },
     plugins: [
       new ForkTsCheckerWebpackPlugin(),
-      // isProduction && new MiniCssExtractPlugin({
-      //   filename: "[name]/main.css",
-      //   chunkFilename: "[name]/[id].css",
-      // }),
-      // new webpack.optimize.LimitChunkCountPlugin({
-      //   maxChunks: 1,
-      // }),
+      new MiniCssExtractPlugin({
+        filename: "[name]/main.css",
+        chunkFilename: "[name]/[id].css",
+      }),
       new CircularDependencyPlugin({
         exclude: /node_modules/,
         failOnError: true

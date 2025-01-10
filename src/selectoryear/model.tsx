@@ -1,11 +1,11 @@
 import { createRoot, Root } from 'react-dom/client';
-import type { TConditionNode, ApiRequestor, IWidget, WidgetArgs, ApprTab } from 'pa-typings';
+import type { TConditionNode, ApiRequestor, IWidget, WidgetArgs, ApprTab, Value } from 'pa-typings';
 
 import { SelectorYear } from './view';
 
-import * as css from './styles.module.css';
+import '../tailwind.css';
 
-// import styles from './main.lazy.css';
+import * as css from './styles.module.css';
 
 class SelectorYearWidget implements IWidget {
   private requestor: ApiRequestor | null = null;
@@ -26,22 +26,18 @@ class SelectorYearWidget implements IWidget {
   }
 
   render(parent: HTMLElement) {
-    // parent.classList.add(css.container);
-    parent.style.position = 'relative';
-    parent.style.height = '100%';
-    parent.style.width = '100%';
+    parent.classList.add(css.container);
 
     this.shadowRoot = parent.attachShadow({ mode: 'open' });
+    const link = document.createElement('link');
+    link.setAttribute('rel', 'stylesheet');
+    link.setAttribute('href', this.args.getUrlStatics('main.css'));
+    this.shadowRoot?.appendChild(link);
 
-    // styles.use({ target: this.shadowRoot });
-
-    // const link = document.createElement('link');
-    // link.setAttribute('rel', 'stylesheet');
-    // link.setAttribute('href', `${this.args.getUrlStatics()}/main.css`);
-    // this.shadowRoot.appendChild(link);
-
-    this.root = createRoot(this.shadowRoot);
-    this.updateContainer();
+    link.onload = () => {
+      this.root = createRoot(this.shadowRoot!);
+      this.updateContainer();
+    };
   }
 
   private updateContainer() {
@@ -51,7 +47,29 @@ class SelectorYearWidget implements IWidget {
         args={this.args}
         parentElement={this.parent!}
         shadowRoot={this.shadowRoot!}
+        getApprValue={this.args.getApprValue}
       />);
+  }
+
+  private async getColumnOptions() {
+    const { wrapperGuid } = await this.requestor!.wrapperGuid();
+
+    if (!this.requestor)
+      return [];
+
+    const { columns = [] } = await this.requestor.info({ wrapperGuid });
+    return columns.map(c => ({ label: c.title, value: c.id })) as unknown as Value[];
+  }
+
+  async updateApprSchema(schema: ApprTab[]): Promise<ApprTab[]> {
+    schema = structuredClone(schema);
+
+    const options = await this.getColumnOptions();
+    const item = schema[0].items.find(i => i.apprKey === 'column');
+    if (item?.props?.options) {
+      item.props.options = options;
+    }
+    return schema;
   }
 
   getApprSchema(): ApprTab[] | undefined {
@@ -59,7 +77,6 @@ class SelectorYearWidget implements IWidget {
   }
 
   dispose(): void {
-    // styles.default.unuset();
   }
 }
 

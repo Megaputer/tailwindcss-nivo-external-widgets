@@ -3,6 +3,22 @@
   "name": "ProgressIndicator",
   "icon": "",
   "description": "",
-  "apprSchema": [],
+  "apprSchema": [
+    {
+      "label": "General",
+      "icon": "",
+      "items": [
+        {
+          "label": "Columns",
+          "type": "multiselect",
+          "apprKey": "columns",
+          "defaultValue": [],
+          "props": {
+            "options": []
+          }
+        }
+      ]
+    }
+  ],
   "dependencies": []
 }

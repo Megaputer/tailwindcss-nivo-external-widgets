@@ -1,9 +1,7 @@
 import * as React from 'react';
-import type { ApiRequestor, Table, TConditionNode, WidgetArgs } from 'pa-typings';
+import type { ApiRequestor, TConditionNode, WidgetArgs } from 'pa-typings';
 import { Selector } from 'components/selector';
 import { variantToDate } from 'helper';
-
-import styles from './main.lazy.css';
 
 type Data = {
   key: number;
@@ -26,7 +24,7 @@ export const SelectorMonth: React.FC<Props> = ({ requestor, args, shadowRoot }) 
   const wrapperGuid = React.useRef<{ wrapperGuid: string }>({ wrapperGuid: '' });
 
   const [data, setData] = React.useState<Data[]>([]);
-  const [isView, setIsView] = React.useState(false);
+  // const [isView, setIsView] = React.useState(false);
 
   React.useEffect(() => {
     // const link = document.createElement('link');
@@ -37,17 +35,17 @@ export const SelectorMonth: React.FC<Props> = ({ requestor, args, shadowRoot }) 
     // );
     // shadowRoot.appendChild(link);
 
-    import('./main.lazy.css').then((style) => {
-      if (style?.default?.use) {
-        styles.use({ target: shadowRoot });
-        setIsView(true);
-        console.log('dss');
-        // const styleTags = document.getElementsByTagName('style');
-        // if (styleTags.length !== 0) {
-        //   shadowDom.append((styleTags as any)['tailwindcss']);
-        // }
-      }
-    });
+    // import('./main.lazy.css').then((style) => {
+    //   if (style?.default?.use) {
+    //     styles.use({ target: shadowRoot });
+    //     setIsView(true);
+    //     console.log('dss');
+    //     // const styleTags = document.getElementsByTagName('style');
+    //     // if (styleTags.length !== 0) {
+    //     //   shadowDom.append((styleTags as any)['tailwindcss']);
+    //     // }
+    //   }
+    // });
   }, [shadowRoot]);
 
   React.useEffect(() => {
@@ -86,8 +84,9 @@ export const SelectorMonth: React.FC<Props> = ({ requestor, args, shadowRoot }) 
   }, [requestor]);
 
   const onDrillDown = (value: number) => {
-    if (value == undefined)
+    if (value == undefined) {
       return;
+    }
 
     const condition: TConditionNode = {
       dVal: value,
@@ -97,14 +96,14 @@ export const SelectorMonth: React.FC<Props> = ({ requestor, args, shadowRoot }) 
     args?.openDrillDown(condition);
   };
 
-  if (!isView)
-    return null;
+  // if (!isView)
+  //   return null;
 
   return (
     <Selector
       placeholder='Выбрать месяц'
       values={data}
-      onDrillDown={onDrillDown}
+      // onDrillDown={onDrillDown}
       shadowRoot={shadowRoot}
     />
   );
