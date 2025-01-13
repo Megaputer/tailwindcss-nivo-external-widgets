@@ -19,171 +19,6 @@ type Data = {
   data: { x: string | number | Date; y: number }[];
 };
 
-// const data = [
-//   {
-//     'id': 'col_0',
-//     'color': 'hsl(179, 70%, 50%)',
-//     'data': [
-//       {
-//         'x': 'plane',
-//         'y': 143
-//       },
-//       {
-//         'x': 'helicopter',
-//         'y': 114
-//       },
-//       {
-//         'x': 'boat',
-//         'y': 49
-//       },
-//       {
-//         'x': 'train',
-//         'y': 52
-//       },
-//       {
-//         'x': 'subway',
-//         'y': 248
-//       },
-//       {
-//         'x': 'bus',
-//         'y': 284
-//       },
-//       {
-//         'x': 'car',
-//         'y': 10
-//       },
-//       {
-//         'x': 'moto',
-//         'y': 6
-//       },
-//       {
-//         'x': 'bicycle',
-//         'y': 207
-//       },
-//       {
-//         'x': 'horse',
-//         'y': 156
-//       },
-//       {
-//         'x': 'skateboard',
-//         'y': 119
-//       },
-//       {
-//         'x': 'others',
-//         'y': 66
-//       }
-//     ]
-//   },
-//   {
-//     'id': 'col_1',
-//     'color': 'hsl(61, 70%, 50%)',
-//     'data': [
-//       {
-//         'x': 'plane',
-//         'y': 198
-//       },
-//       {
-//         'x': 'helicopter',
-//         'y': 69
-//       },
-//       {
-//         'x': 'boat',
-//         'y': 67
-//       },
-//       {
-//         'x': 'train',
-//         'y': 168
-//       },
-//       {
-//         'x': 'subway',
-//         'y': 21
-//       },
-//       {
-//         'x': 'bus',
-//         'y': 233
-//       },
-//       {
-//         'x': 'car',
-//         'y': 263
-//       },
-//       {
-//         'x': 'moto',
-//         'y': 54
-//       },
-//       {
-//         'x': 'bicycle',
-//         'y': 152
-//       },
-//       {
-//         'x': 'horse',
-//         'y': 175
-//       },
-//       {
-//         'x': 'skateboard',
-//         'y': 219
-//       },
-//       {
-//         'x': 'others',
-//         'y': 131
-//       }
-//     ]
-//   },
-//   {
-//     'id': 'col_2',
-//     'color': 'hsl(5, 70%, 50%)',
-//     'data': [
-//       {
-//         'x': 'plane',
-//         'y': 111
-//       },
-//       {
-//         'x': 'helicopter',
-//         'y': 147
-//       },
-//       {
-//         'x': 'boat',
-//         'y': 151
-//       },
-//       {
-//         'x': 'train',
-//         'y': 147
-//       },
-//       {
-//         'x': 'subway',
-//         'y': 64
-//       },
-//       {
-//         'x': 'bus',
-//         'y': 14
-//       },
-//       {
-//         'x': 'car',
-//         'y': 184
-//       },
-//       {
-//         'x': 'moto',
-//         'y': 218
-//       },
-//       {
-//         'x': 'bicycle',
-//         'y': 10
-//       },
-//       {
-//         'x': 'horse',
-//         'y': 2
-//       },
-//       {
-//         'x': 'skateboard',
-//         'y': 144
-//       },
-//       {
-//         'x': 'others',
-//         'y': 201
-//       }
-//     ]
-//   }
-// ];
-
 interface Props {
   requestor: ApiRequestor;
   getApprValue: (key: string) => ApprValue | undefined;
@@ -193,6 +28,10 @@ export const LineChartWidget: React.FC<Props> = ({ requestor, getApprValue }) =>
   const wrapperGuid = React.useRef<{ wrapperGuid: string }>({ wrapperGuid: '' });
   const [dsInfo, setDsInfo] = React.useState<DatasetInfo>();
   const [data, setData] = React.useState<Data[]>([]);
+
+  const minYAxis = getApprValue('minYAxis') as number;
+  const maxYAxis = getApprValue('maxYAxis') as number;
+  const [yScale, setYScale] = React.useState({ min: minYAxis, max: maxYAxis });
 
   const xAxis = getApprValue('xAxis') as number;
   const yAxis = getApprValue('yAxis') as unknown as number[];
@@ -208,7 +47,7 @@ export const LineChartWidget: React.FC<Props> = ({ requestor, getApprValue }) =>
 
   React.useEffect(() => {
     const getValues = async () => {
-      if (dsInfo == undefined)
+      if (dsInfo == undefined || !yAxis.length)
         return;
 
       const values = await requestor.values({
@@ -235,6 +74,20 @@ export const LineChartWidget: React.FC<Props> = ({ requestor, getApprValue }) =>
     };
     getValues();
   }, [dsInfo, xAxis, yAxis.length]);
+
+  React.useEffect(() => {
+    if (minYAxis !== yScale.min) {
+      setYScale({ ...yScale, min: minYAxis });
+    }
+
+    if (maxYAxis !== yScale.max) {
+      setYScale({ ...yScale, max: maxYAxis });
+    }
+  }, [minYAxis, maxYAxis]);
+
+  if (!yAxis.length) {
+    return <div className={css.selectColumn}>Select column in the appearance</div>;
+  }
 
   return (
     <div className={css.main}>
@@ -263,8 +116,8 @@ export const LineChartWidget: React.FC<Props> = ({ requestor, getApprValue }) =>
         xScale={{ type: 'point' }}
         yScale={{
           type: 'linear',
-          min: -20,
-          max: 120,
+          min: yScale.min,
+          max: yScale.max,
           clamp: true,
           stacked: false,
           reverse: false,

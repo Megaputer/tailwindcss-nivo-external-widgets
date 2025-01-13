@@ -39,7 +39,6 @@ export const SelectorMonth: React.FC<Props> = ({ requestor, args, shadowRoot }) 
     //   if (style?.default?.use) {
     //     styles.use({ target: shadowRoot });
     //     setIsView(true);
-    //     console.log('dss');
     //     // const styleTags = document.getElementsByTagName('style');
     //     // if (styleTags.length !== 0) {
     //     //   shadowDom.append((styleTags as any)['tailwindcss']);

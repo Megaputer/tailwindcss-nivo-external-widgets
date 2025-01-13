@@ -13,10 +13,12 @@
   font-weight: 700;
 }
 
-.row {
-  color: blue;
-}
-
-.column {
-  color: red;
+.select-column {
+  position: relative;
+  height: 100%;
+  width: max-content;
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+  color: #fff;
 }

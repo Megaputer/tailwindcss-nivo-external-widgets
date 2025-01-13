@@ -24,7 +24,6 @@ class CardWidgetWidget implements IWidget {
 
   render(parent: HTMLElement) {
     parent.classList.add(css.container);
-    this.root = createRoot(parent);
     this.updateContainer();
 
     const shadowRoot = parent.attachShadow({ mode: 'open' });

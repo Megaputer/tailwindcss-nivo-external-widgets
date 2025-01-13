@@ -63,6 +63,10 @@ export const ProgressIndicator: React.FC<Props> = ({ requestor, getApprValue }) 
     getValues();
   }, [dsInfo, colIds.length]);
 
+  if (!colIds.length) {
+    return <div className={css.selectColumn}>Select column in the appearance</div>;
+  }
+
   return (
     <div>
       {data.map(({ title, value, color }) => (
@@ -105,7 +109,7 @@ const ProgressBlock: React.FC<Data> = ({ title, value, color }) => {
           color={undefined}
           style={style}
           classNames={{
-            indicator: css.bgCustom, // 'bg-[--hover-color]',
+            indicator: css.bgCustom,
           }}
         />
       </div>

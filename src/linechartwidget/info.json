@@ -27,6 +27,30 @@
           }
         }
       ]
+    },
+    {
+      "label": "Chart",
+      "icon": "",
+      "items": [
+        {
+          "label": "Min y axis",
+          "type": "number",
+          "apprKey": "minYAxis",
+          "defaultValue": -20,
+          "props": {
+            "options": []
+          }
+        },
+        {
+          "label": "Max y axis",
+          "type": "number",
+          "apprKey": "maxYAxis",
+          "defaultValue": 120,
+          "props": {
+            "options": []
+          }
+        }
+      ]
     }
   ],
   "dependencies": []

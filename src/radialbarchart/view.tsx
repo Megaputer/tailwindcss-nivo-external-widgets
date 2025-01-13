@@ -17,36 +17,6 @@ type Data = {
   data: { x: string; y: number }[];
 };
 
-// const data = [
-//   {
-//     id: 'traf',
-//     data: [
-//       {
-//         x: 'LFL ТРАФИК',
-//         y: 60,
-//       },
-//     ],
-//   },
-//   {
-//     id: 'check',
-//     data: [
-//       {
-//         x: 'LFL СРЕДНИЙ ЧЕК',
-//         y: 70,
-//       },
-//     ],
-//   },
-//   {
-//     id: 'ptd',
-//     data: [
-//       {
-//         x: 'LFL PTD',
-//         y: 80,
-//       },
-//     ],
-//   }
-// ];
-
 interface Props {
   requestor: ApiRequestor;
   getApprValue: (key: string) => ApprValue | undefined;
@@ -150,6 +120,10 @@ export const RadialBarChart: React.FC<Props> = ({ requestor, getApprValue }) => 
       },
     }
   };
+
+  if (!colIds.length) {
+    return <div className={css.selectColumn}>Select column in the appearance</div>;
+  }
 
   return (
     <div className={css.main}>

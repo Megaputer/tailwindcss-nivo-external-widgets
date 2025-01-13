@@ -4,6 +4,8 @@ import type { ApiRequestor, ApprValue, DatasetInfo } from 'pa-typings';
 import { NextUIProvider } from '@nextui-org/system';
 import { Card, CardHeader, CardBody, CardFooter } from '@nextui-org/card';
 
+import * as css from './view.css';
+
 type Data = {
   title: string;
   value: number;
@@ -71,6 +73,10 @@ export const CardWidget: React.FC<Props> = ({ requestor, getApprValue }) => {
     alignItems: 'center',
     fontWeight: 700
   };
+
+  if (!columnIndexes.length) {
+    return <div className={css.selectColumn}>Select column in the appearance</div>;
+  }
 
   return (
     <NextUIProvider className='dark'>
