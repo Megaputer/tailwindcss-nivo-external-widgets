@@ -56,26 +56,6 @@ module.exports = function (_, argv = {}) {
           ]
         },
         {
-          test: /\.lazy.css$/,
-          use: [
-            {
-              loader: 'style-loader',
-              options: {
-                attributes: { name: 'tailwindcss' },
-                injectType: 'lazyAutoStyleTag',
-        				insert: require.resolve('./insert-function.js'),
-              }
-            },
-            {
-              loader: 'css-loader',
-              options: {
-                modules: false
-              }
-            },
-            'postcss-loader'
-          ],
-        },
-        {
           test: /tailwind.css$/,
           use: [
             {
@@ -108,7 +88,7 @@ module.exports = function (_, argv = {}) {
             },
             'postcss-loader'
           ],
-          exclude: /(\.lazy|module|tailwind)\.css$/,
+          exclude: /(\.module|tailwind)\.css$/,
         },
         {
           test: /\.module.css$/,
