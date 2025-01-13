@@ -1,0 +1,57 @@
+{
+  "guid": "401dc200-f23c-4e42-9ca7-ea01865b71e5",
+  "name": "LineChartWidget",
+  "icon": "",
+  "description": "",
+  "apprSchema": [
+    {
+      "label": "General",
+      "icon": "",
+      "items": [
+        {
+          "label": "Column x axis",
+          "type": "select",
+          "apprKey": "xAxis",
+          "defaultValue": "",
+          "props": {
+            "options": []
+          }
+        },
+        {
+          "label": "Columns y axis",
+          "type": "multiselect",
+          "apprKey": "yAxis",
+          "defaultValue": [],
+          "props": {
+            "options": []
+          }
+        }
+      ]
+    },
+    {
+      "label": "Chart",
+      "icon": "",
+      "items": [
+        {
+          "label": "Min y axis",
+          "type": "number",
+          "apprKey": "minYAxis",
+          "defaultValue": -20,
+          "props": {
+            "options": []
+          }
+        },
+        {
+          "label": "Max y axis",
+          "type": "number",
+          "apprKey": "maxYAxis",
+          "defaultValue": 120,
+          "props": {
+            "options": []
+          }
+        }
+      ]
+    }
+  ],
+  "dependencies": []
+}

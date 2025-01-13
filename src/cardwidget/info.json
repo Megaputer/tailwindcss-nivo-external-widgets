@@ -1,0 +1,24 @@
+{
+  "guid": "8c21e893-9672-4255-8f29-adfc6412f2c1",
+  "name": "CardWidget",
+  "icon": "",
+  "description": "",
+  "apprSchema": [
+    {
+      "label": "General",
+      "icon": "",
+      "items": [
+        {
+          "label": "Columns",
+          "type": "multiselect",
+          "apprKey": "columns",
+          "defaultValue": [],
+          "props": {
+            "options": []
+          }
+        }
+      ]
+    }
+  ],
+  "dependencies": []
+}
