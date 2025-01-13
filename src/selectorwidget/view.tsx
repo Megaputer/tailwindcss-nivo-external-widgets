@@ -17,7 +17,7 @@ interface Props {
   parentElement?: HTMLElement;
 }
 
-export const SelectorYear: React.FC<Props> = (props) => {
+export const SelectorView: React.FC<Props> = (props) => {
   const { requestor, args, getApprValue, shadowRoot } = props;
 
   const wrapperGuid = React.useRef<{ wrapperGuid: string }>({ wrapperGuid: '' });

@@ -1,13 +1,13 @@
 import { createRoot, Root } from 'react-dom/client';
 import type { TConditionNode, ApiRequestor, IWidget, WidgetArgs, ApprTab, Value } from 'pa-typings';
 
-import { SelectorYear } from './view';
+import { SelectorView } from './view';
 
 import '../tailwind.css';
 
 import * as css from './styles.module.css';
 
-class SelectorYearWidget implements IWidget {
+class SelectorWidget implements IWidget {
   private requestor: ApiRequestor | null = null;
   private root: Root | null = null;
   private parent: HTMLElement | null = null;
@@ -42,7 +42,7 @@ class SelectorYearWidget implements IWidget {
 
   private updateContainer() {
     if (this.root && this.requestor)
-      this.root.render(<SelectorYear
+      this.root.render(<SelectorView
         requestor={this.requestor}
         args={this.args}
         parentElement={this.parent!}
@@ -80,4 +80,4 @@ class SelectorYearWidget implements IWidget {
   }
 }
 
-export const create = (args: WidgetArgs) => new SelectorYearWidget(args);
+export const create = (args: WidgetArgs) => new SelectorWidget(args);
