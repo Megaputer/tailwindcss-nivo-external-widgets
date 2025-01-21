@@ -16,6 +16,13 @@
           "props": {
             "options": []
           }
+        },
+        {
+          "type": "group",
+          "label": "Colors",
+          "apprKey": "colors",
+          "hidden": true,
+          "items": []
         }
       ]
     }

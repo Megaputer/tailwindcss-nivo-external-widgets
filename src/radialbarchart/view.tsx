@@ -27,7 +27,7 @@ export const RadialBarChart: React.FC<Props> = ({ requestor, getApprValue }) => 
   const [dsInfo, setDsInfo] = React.useState<DatasetInfo>();
   const [data, setData] = React.useState<Data[]>([]);
 
-  const colIds = getApprValue('columns') as unknown as number[];
+  const colNames = getApprValue('columns') as unknown as string[];
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -43,25 +43,29 @@ export const RadialBarChart: React.FC<Props> = ({ requestor, getApprValue }) => 
       if (dsInfo == undefined)
         return;
 
+      const columnIndexes = dsInfo.columns
+        .filter(({ title }) => colNames.includes(title))
+        .map(c => c.id);
+
       const { table = [] } = await requestor.values({
         offset: 0,
         rowCount: 1,
-        columnIndexes: colIds,
+        columnIndexes,
         wrapperGuid: wrapperGuid.current.wrapperGuid
       });
 
       const newData: Data[] = [];
       let id = 0;
-      for (const colId of colIds) {
-        const title = dsInfo.columns[colId].title || 'Unknown column';
+      for (const name of colNames) {
+        const title = name || 'Unknown column';
         const data = [{ x: title, y: Number(table[0][id]) }];
-        newData.push({ id: 'col_' + id, data });
+        newData.push({ id: title, data });
         id += 1;
       }
       setData(newData);
     };
     getValues();
-  }, [dsInfo, colIds.length]);
+  }, [dsInfo, colNames.length]);
 
   const CustomLayer = ({ center }: RadialBarCustomLayerProps) => {
     const lines = 'Выполнение плана'.toUpperCase().split(' ');
@@ -121,8 +125,13 @@ export const RadialBarChart: React.FC<Props> = ({ requestor, getApprValue }) => 
     }
   };
 
-  if (!colIds.length) {
+  if (!colNames.length) {
     return <div className={css.selectColumn}>Select column in the appearance</div>;
+  }
+
+  const colors: Record<string, string> = {};
+  for (const col of colNames) {
+    colors[`${col}.${col}`] = getApprValue(`colors/${col}`)?.toString() || '#ccc';
   }
 
   return (
@@ -130,7 +139,7 @@ export const RadialBarChart: React.FC<Props> = ({ requestor, getApprValue }) => 
       <ResponsiveRadialBar
         data={data}
         theme={demoTheme}
-        colors={d => colorByGroupId[d.groupId as keyof typeof colorByGroupId] || '#fff'}
+        colors={d => colors[d.id] || '#ccc'}
         valueFormat=' >-.2f'
         padding={0.6}
         cornerRadius={20}

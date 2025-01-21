@@ -1,5 +1,5 @@
 import { createRoot, Root } from 'react-dom/client';
-import type { TConditionNode, ApiRequestor, IWidget, WidgetArgs, ApprTab, Value } from 'pa-typings';
+import type { TConditionNode, ApiRequestor, IWidget, WidgetArgs, ApprTab, Value, ApprCtrl } from 'pa-typings';
 
 import { ProgressIndicator } from './view';
 
@@ -53,7 +53,25 @@ class ProgressIndicatorWidget implements IWidget {
       return [];
 
     const { columns = [] } = await this.requestor.info({ wrapperGuid });
-    return columns.map(c => ({ label: c.title, value: c.id })) as unknown as Value[];
+    return columns.map(({ title }) => ({ label: title, value: title })) as unknown as Value[];
+  }
+
+  private updateColorAppr(schema: ApprTab[]) {
+    const apprItem = schema[0].items.find(i => i.type == 'group' && i.apprKey === 'colors');
+    if (apprItem?.items) {
+      const columns = this.args.getApprValue('columns') as unknown as string[];
+      const newItems: Omit<ApprCtrl, 'items'>[] = (columns || []).map((label) => {
+        return ({
+          label,
+          apprKey: `colors/${label}`,
+          type: 'color',
+          defaultValue: '#ccc'
+        });
+      });
+
+      apprItem.hidden = !columns.length;
+      apprItem.items = newItems;
+    }
   }
 
   async updateApprSchema(schema: ApprTab[]): Promise<ApprTab[]> {
@@ -62,8 +80,10 @@ class ProgressIndicatorWidget implements IWidget {
     const options = await this.getColumnOptions();
     const item = schema[0].items.find(i => i.apprKey === 'columns');
     if (item?.props?.options) {
-      item.props.options = [...item.props.options, ...options];
+      item.props.options = options;
     }
+
+    this.updateColorAppr(schema);
     return schema;
   }
 
