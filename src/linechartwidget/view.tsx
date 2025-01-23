@@ -7,12 +7,6 @@ import { ResponsiveLine } from '@nivo/line';
 
 import * as css from './styles.module.css';
 
-const colorByGroupId = {
-  'col_0': '#6b6ef8',
-  'col_1': '#c654f3',
-  'col_2': '#3b94fd'
-};
-
 type Data = {
   id: string;
   color?: string;
@@ -33,8 +27,8 @@ export const LineChartWidget: React.FC<Props> = ({ requestor, getApprValue }) =>
   const maxYAxis = getApprValue('maxYAxis') as number;
   const [yScale, setYScale] = React.useState({ min: minYAxis, max: maxYAxis });
 
-  const xAxis = getApprValue('xAxis') as number;
-  const yAxis = getApprValue('yAxis') as unknown as number[];
+  const xAxis = getApprValue('xAxis') as string;
+  const yAxis = getApprValue('yAxis') as unknown as string[];
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -50,24 +44,28 @@ export const LineChartWidget: React.FC<Props> = ({ requestor, getApprValue }) =>
       if (dsInfo == undefined || !yAxis.length)
         return;
 
-      const values = await requestor.values({
+      const columnIndexes = dsInfo.columns
+        .filter(({ title }) => [xAxis, ...yAxis].includes(title))
+        .map(c => c.id);
+
+      const { table = [] } = await requestor.values({
         offset: 0,
-        columnIndexes: [xAxis, ...yAxis],
+        columnIndexes,
         rowCount: dsInfo.rowCount,
         wrapperGuid: wrapperGuid.current.wrapperGuid
       });
 
       const newData: Data[] = [];
       let id = 0;
-      for (let i = 1; i <= yAxis.length; i++) {
+      for (let i = 0; i < yAxis.length; i++) {
         const data = [];
-        for (const vals of values.table?.slice(0, 20) || []) {
+        for (const vals of table.slice(0, 20)) {
           data.push({
             x: +vals[0],
-            y: Number(vals[i])
+            y: Number(vals[i + 1])
           });
         }
-        newData.push({ id: 'col_' + id, color: 'hsl(179, 70%, 50%)', data });
+        newData.push({ id: yAxis[i], color: 'hsl(179, 70%, 50%)', data });
         id += 1;
       }
       setData(newData);
@@ -85,8 +83,17 @@ export const LineChartWidget: React.FC<Props> = ({ requestor, getApprValue }) =>
     }
   }, [minYAxis, maxYAxis]);
 
+  if (!xAxis.length) {
+    return <div className={css.selectColumn}>Select column for X scale in the appearance</div>;
+  }
+
   if (!yAxis.length) {
-    return <div className={css.selectColumn}>Select column in the appearance</div>;
+    return <div className={css.selectColumn}>Select column for Y scale in the appearance</div>;
+  }
+
+  const colors: Record<string, string> = {};
+  for (const col of yAxis) {
+    colors[col] = getApprValue(`colors/${col}`)?.toString() || '#ccc';
   }
 
   return (
@@ -142,7 +149,7 @@ export const LineChartWidget: React.FC<Props> = ({ requestor, getApprValue }) =>
         }}
         axisLeft={null}
         enableGridY={false}
-        colors={d => colorByGroupId[d.id as keyof typeof colorByGroupId]}
+        colors={d => colors[d.id] || '#ccc'}
         pointSize={8}
         pointColor={{ theme: 'background' }}
         pointBorderWidth={2}

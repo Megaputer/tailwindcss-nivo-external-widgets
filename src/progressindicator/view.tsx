@@ -24,7 +24,7 @@ export const ProgressIndicator: React.FC<Props> = ({ requestor, getApprValue }) 
 
   const [dsInfo, setDsInfo] = React.useState<DatasetInfo>();
   const [data, setData] = React.useState<Data[]>([]);
-  const colIds = getApprValue('columns') as unknown as number[];
+  const colNames = getApprValue('columns') as unknown as string[];
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -40,42 +40,47 @@ export const ProgressIndicator: React.FC<Props> = ({ requestor, getApprValue }) 
       if (dsInfo == undefined)
         return;
 
+      const columnIndexes = dsInfo.columns
+        .filter(({ title }) => colNames.includes(title))
+        .map(c => c.id);
+
       const { table = [] } = await requestor.values({
         offset: 0,
         rowCount: dsInfo.rowCount,
-        columnIndexes: colIds,
+        columnIndexes,
         wrapperGuid: wrapperGuid.current.wrapperGuid
       });
 
       const newData: any[] = [];
       let id = 0;
-      for (const colId of colIds) {
-        const title = dsInfo.columns[colId].title || 'Unknown column';
+      for (const name of colNames) {
         newData.push({
-          title,
-          value: table[0][id],
-          color: colors[id] || 'white'
+          title: name || 'Unknown column',
+          value: table[0][id]
         });
         id += 1;
       }
       setData(newData);
     };
     getValues();
-  }, [dsInfo, colIds.length]);
+  }, [dsInfo, colNames.length]);
 
-  if (!colIds.length) {
+  if (!colNames.length) {
     return <div className={css.selectColumn}>Select column in the appearance</div>;
   }
 
   return (
     <div>
-      {data.map(({ title, value, color }) => (
-        <ProgressBlock
-          key={value}
-          color={color}
-          title={title}
-          value={value}
-        />))}
+      {data.map(({ title, value }) => {
+        const color = getApprValue(`colors/${title}`)?.toString() || '#ccc';
+        return (
+          <ProgressBlock
+            key={value}
+            color={color}
+            title={title}
+            value={value}
+          />);
+      })}
     </div>
   );
 };
